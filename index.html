@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Ce que j'ai appris en faisant un jeu pourri</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="shower/themes/ribbon/styles/screen-16x10.css">
+</head>
+<body class="shower list">
+
+<header class="caption">
+    <h1>Ce que j'ai appris en faisant un jeu pourri</h1>
+    <p>David Raluy - Arca Computing.fr</p>
+</header>
+
+<section class="slide" id="cover">
+    <h2>Ce que j'ai appris en faisant un jeu pourri</h2>
+    <p>David Raluy - Arca Computing</a></p>
+    <style>
+        #cover h2 {
+            margin:30px 0 0;
+            text-align:center;
+            font-size:70px;
+        }
+        #cover p {
+            margin:10px 0 0;
+            text-align:center;
+            font-style:italic;
+            font-size:20px;
+        }
+        #cover p a {
+            color:#FFF;
+        }
+    </style>
+</section>
+
+<section class="slide">
+    <h2>Le jeu</h2>
+    <ol>
+        <li>RPG roguelike en mode texte</li>
+        <li>Génération aléatoire de dongeon</li>
+        <li>Génération procédurale de dialogues</li>
+    </ol>
+    <!--
+    La vous vous dite forcement: ce type est un genie. En fait, pas du tout.
+    //-->
+</section>
+
+<section class="slide">
+    <h2>Le jeu</h2>
+    <pre class="next">
+		<code>---------------------------------
+|Player: 20PV                   |
+---------------------------------
+Vous entrez dans une chambre. Les plafonds sont sombres. Dans le coin droit de la chambre vous percevez un fauteuil.
+Vous apercevez 1 sorties. 
+Au SUD, se dresse un portail solide.
+Vous pouvez FOUILLER un fauteuil.
+Quel est votre choix ?
+		</code>
+		</pre>
+    <!--
+    Je sais, vous etes impressiones, je vous comprends.
+    En haut, le nom du joueur et son nombre de points de vie. Ensuite, une description générée de la pièce, de ses sorties, et de ce qu'elle contient. Tout cela est aléatoire.
+    Ensuite, en fonction de ce qui a été genere, on affiche les actions possibles en majuscules; on les tape dans la console et le jeu affiche le resultat.
+    Si on choisit SUD par ex., on se retrouvera dans une salle ayant au nord  un portail solide, et possiblement un monstre et jusqu'a trois autres sorties.
+    //-->
+</section>
+
+<section class="slide">
+    <h2>Génération procédurale de dongeon</h2>
+    <p class="next">Première idée: générer les pièces au fur et à mesure.<br/>
+        <span class="next">Problème: équilibrer la topologie.</span></p>
+    <div class="double">
+        <div class="next ">
+            <figure>
+                <img src="./img/ProceduralTree.png" class="middle">
+            </figure>
+        </div>
+        <div class="next place bottom"><img src="./img/arrow.png" class=""></div>
+        <div class="next middle">
+            <figure>
+                <img src="./img/ProceduralTree2.png" class="middle">
+            </figure>
+        </div>
+        </p>
+    </div>
+    <style>
+        .middle {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <!--
+    Ma premiere idee etait de generer la topologie au fur et a mesure avec des heuristiques.
+    Ici une representation d'un labyrinthe de 11 cases genere au fur et a mesure. En vert la position de depart, en rouge l'arrivee.
+    Si on represente cette topographie sous forme d'arbre on se rend compte qu'il est tres equilibre, et a tendance a former de longs couloirs, dans lesquels on devra revenir pour trouver la sortie.
+    C'est chiant a naviguer, et on ne peut pas guider le joueur puisqu'on ne sait pas ce que les prochaines pieces contiennent.
+    Essayer de rendre ca plus interessant a naviguer c'est savoir trouver des fonctions mathematiques qui vont prendre en parametre la valeur n-1 au minimum et former des arborescences desequilibrees, avec la sortie au bout du chemin le plus long,
+    pour eviter de rebrousser des culs-de-sac trop longs.
+    C'est trop complique pour mon faible niveau en maths, je vous avais dit que j'etais pas un genie.
+    //-->
+</section>
+
+<section class="slide">
+    <h2>Génération procédurale de dongeon</h2>
+    <p class="next">Solution: générer la topologie d'un coup</p>
+    <ul>
+        <li class="next">Permet de rallonger/raccourcir certaines branches pour avoir un chemin principal, entre
+            autres.
+        </li>
+        <li class="next">Nombreux choix d'algorithmes pour avoir un arbre équilibré comme l'on souhaite. <br/>
+            Big up a Jamis Buck: <a href="http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap">http://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap</a>
+        </li>
+    </ul>
+    <!--
+    Solution: on genere tout en avance. Ca permet de repasser dessus pour le customiser si on veut, on peut choisir des valeurs judicieuses pour le depart et l'arrivee, on peut equilibrer l'arbre comme on veut.
+    C'est tellement plus simple, je vous conseille fortement de commencer par ca, meme si ca a moins de panache que d'essayer de refaire no man's sky.
+    -->
+</section>
+
+<section class="slide">
+    <h2>Génération procédurale de texte</h2>
+    <p class="next">Pour générer du texte il y a deux possibilités:</p>
+    <ol>
+        <li class="next">Faire une thèse, se rendre compte que l'existant est pourri, puis utiliser la solution qui
+            suit:
+        </li>
+        <li class="next">Tricher, en faisant des textes a trous</li>
+    </ol>
+    <!--
+    C'est un exemple reel, j'ai eu l'occasion de lire la thèse d'un nommé Adam Fedja, écrite en 2015, qui arrivait a ce même constat: il est très difficile d'arriver a generer du texte ayant du sens.
+    Il existe quelques logiciels qui essaient de produire du texte ayant un sens, mais: on peut moyennement guider ce sens, ils sont en anglais, et complexes a utiliser pour certains.
+    La grande majorité des personnes vont donc choisir de "tricher", cad d'utiliser des phrases a trous.
+    -->
+</section>
+
+<section class="slide">
+    <h2>Génération procédurale de texte</h2>
+    <p class="next">Implémentation naive:</p>
+    <div class="container">
+    <pre class="next abs">
+        <code>Bonjour #player_name, que voulez-vous acheter?</code>
+        <code>Je voudrais une #arme</code>
+        <code>J'ai de très belles #armes</code>
+        <code>Alors je vous achète cette #arme</code>
+    </pre>
+    <pre class="next abs">
+        <code>Bonjour David, que voulez-vous acheter?</code>
+        <code>Je voudrais une épée.</code>
+        <code>J'ai de très belles arcs.</code>
+        <code>Alors je vous achète cette hache.</code>
+    </pre>
+
+    </div>
+    <style>
+        .container {
+            position: relative;
+        }
+        pre.abs {
+            background-color: white;
+            position: absolute;
+            top: 1em;
+            left:1em;
+            right: 0;
+        }
+    </style>
+    <!--
+    J'ai code le remplacement naivement, et je me suis retouve avec deux problemes:
+    1. Le contexte est oublié entre les phrases
+    2. Le pluriel, les genres, conjugaisons posent problème.
+    -->
+</section>
+
+<section class="slide">
+    <h2>Génération procédurale de texte</h2>
+    <p class="next">Solution: être moins naif. Je me suis inspiré du travail de Kate Compton, qui a codé Tracery (<a href="http://www.tracery.io/">http://www.tracery.io/</a>).<br/>
+        Exemple de syntaxe:
+    </p>
+    <pre class=" next">
+        <code>[arme:syn_arme]J'ai de très #beau.f.s# #arme.s#.</code>
+
+    </pre>
+    <p class=" next">&#8674; J'ai de très belles épées.</p>
+    <!--
+    Kate travaille dans la generation procedurale en general, et a code un outil de generation de texte en javascript, pour l'anglais.
+    (Il existe de nombreux generateurs sur le meme principe)
+    Je l'ai recode en java, pour le francais.
+    Les mots entre crochets définissent un contexte: les tokens spécifiés garderont la même valeur par la suite.
+    Les modifieurs permettent d'ajuster les accords de genre et de nombre.
+    Cela permet de faire des textes longs ayant du sens, pour un effort de codage relativement faible.
+    -->
+</section>
+
+<section class="slide">
+    <h2>Architecture: la "game loop"</h2>
+    <p class="next">Exemple sur <a href="http://gameprogrammingpatterns.com">http://gameprogrammingpatterns.com</a></p>
+    <div class="container">
+        <pre class="next abs">
+        <code>while (true)</code>
+<code>{</code>
+<code>  processInput();</code>
+<code>  update();</code>
+<code>  render();</code>
+<code>}</code>
+        </pre>
+    </div>
+    <!--
+    Les trois etapes partagent le meme scope de donnees.
+    Le modele a vite fait de devenir un etat global, accessible de partout, entrainant des problemes d'acces concurrents.
+    Il est aussi tentant d'appeler le service de rendu depuis les autres etapes, et inversement. J'ai fait toutes ces betises, et puis j'ai tout réécrit proprement.
+    Oui mais quelle est cette solution propre me demandez-vous?
+    -->
+</section>
+
+<section class="slide">
+    <h2>Architecture: la "game loop"</h2>
+    <div class="double">
+    <p class="next">Solution: codez la game loop comme une machine a états, avec une interface claire entre les états.</p>
+        <figure  class="next">
+            <img src="./img/statemachine.png" class="middle">
+        </figure>
+    </div>
+    <!--
+    On trouve ce diagramme facilement, mais bizarrement le code qui l'accompagne n'est jamais decoupe comme cela. Faites-le.
+    C'est une bonne maniere d'avoir du code maintenable longtemps, et de pouvoir ajouter ou remplacer des modules plus tard.
+    Voila ce que j'ai appris en codant un jeu pourri.
+    -->
+</section>
+
+<section class="slide">
+    <h2 class="shout shrink">Merci!</h2>
+</section>
+<div class="progress"></div>
+
+<script src="shower/shower.min.js"></script>
+<!-- Copyright © 2017 Yours Truly, Famous Inc. -->
+
+</body>
+</html>
